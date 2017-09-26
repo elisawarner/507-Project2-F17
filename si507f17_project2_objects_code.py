@@ -58,20 +58,46 @@ def sample_get_cache_itunes_data(search_term,media_term="all"):
 	if unique_ident in CACHE_DICTION:
 		return CACHE_DICTION[unique_ident]
 	else:
-		CACHE_DICTION[unique_ident] = json.loads(requests.get(baseurl, params=params).text)
-		full_text = json.dumps(CACHE_DICTION)
-		cache_file_ref = open(CACHE_FNAME,"w")
-		cache_file_ref.write(full_text)
-		cache_file_ref.close()
-		return CACHE_DICTION[unique_ident]
+		CACHE_DICTION[unique_ident] = json.loads(requests.get(baseurl, params=params).text) # download data, add to cache dict
+		full_text = json.dumps(CACHE_DICTION) # turns cache dict into a string
+		cache_file_ref = open(CACHE_FNAME,"w") # open cache file
+		cache_file_ref.write(full_text) # write in cache dict to cache file
+		cache_file_ref.close() # close cache file
+		return CACHE_DICTION[unique_ident] # call up the downloaded data
 
 
 ## [PROBLEM 1] [250 POINTS]
 print("\n***** PROBLEM 1 *****\n")
 
-
 ## For problem 1, you should define a class Media, representing ANY piece of media you can find on iTunes search. 
 
+class Media(object):
+	def __init__(self, data_dict):
+		self.title = data_dict['trackName'].encode('ascii','replace')
+		self.author = data_dict['artistName'].encode('ascii','replace')
+		self.itunes_URL = data_dict['trackViewUrl'].encode('ascii','replace')
+		self.itunes_id = data_dict['trackId']
+
+	## - a special string method, that returns a string of the form 'TITLE by AUTHOR'
+	def __str__(self):
+		return '{} by {}'.format(self.title, self.author)
+
+	## - a special representation method, which returns "ITUNES MEDIA: <itunes id>" with 
+	## the iTunes id number for the piece of media (e.g. the track) only in place of "<itunes id>"
+	def __repr__(self):
+		return "ITUNES MEDIA: {}".format(self.itunes_id)
+
+	## - a special len method, which, for the Media class, returns 0 no matter what. 
+	## (The length of an audiobook might mean something different from the length of a song, depending on how you want to define them!)
+	def __len__(self):
+		return 0
+
+	## - a special contains method (for the in operator) which takes one additional 
+	## input, as all contains methods must, which should always be a string, and checks
+	## to see if the string input to this contains method is INSIDE the string representing the title of this piece of media (the title instance variable)
+
+	def __contains__(self, var):
+		pass
 
 ## The Media class constructor should accept one dictionary data structure representing a piece of media from iTunes as input to the constructor.
 ## It should instatiate at least the following instance variables:
@@ -86,6 +112,12 @@ print("\n***** PROBLEM 1 *****\n")
 ## - a special len method, which, for the Media class, returns 0 no matter what. (The length of an audiobook might mean something different from the length of a song, depending on how you want to define them!)
 ## - a special contains method (for the in operator) which takes one additional input, as all contains methods must, which should always be a string, and checks to see if the string input to this contains method is INSIDE the string representing the title of this piece of media (the title instance variable)
 
+# TEST #
+media_samples = sample_get_cache_itunes_data("love")["results"]
+
+for el in media_samples:
+	test_class = Media(el)
+	print(repr(test_class))
 
 
 ## [PROBLEM 2] [400 POINTS]

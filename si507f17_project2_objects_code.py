@@ -73,9 +73,10 @@ print("\n***** PROBLEM 1 *****\n")
 
 class Media(object):
 	def __init__(self, data_dict):
-		self.title = data_dict['trackName'].encode('ascii','replace')
-		self.author = data_dict['artistName'].encode('ascii','replace')
-		self.itunes_URL = data_dict['trackViewUrl'].encode('ascii','replace')
+		self.data = data_dict
+		self.title = data_dict['trackName']
+		self.author = data_dict['artistName']
+		self.itunes_URL = data_dict['trackViewUrl']
 		self.itunes_id = data_dict['trackId']
 
 	## - a special string method, that returns a string of the form 'TITLE by AUTHOR'
@@ -97,7 +98,7 @@ class Media(object):
 	## to see if the string input to this contains method is INSIDE the string representing the title of this piece of media (the title instance variable)
 
 	def __contains__(self, var):
-		pass
+		return var in self.title
 
 ## The Media class constructor should accept one dictionary data structure representing a piece of media from iTunes as input to the constructor.
 ## It should instatiate at least the following instance variables:
@@ -113,11 +114,12 @@ class Media(object):
 ## - a special contains method (for the in operator) which takes one additional input, as all contains methods must, which should always be a string, and checks to see if the string input to this contains method is INSIDE the string representing the title of this piece of media (the title instance variable)
 
 # TEST #
-media_samples = sample_get_cache_itunes_data("love")["results"]
+#media_samples = sample_get_cache_itunes_data("love")["results"]
 
-for el in media_samples:
-	test_class = Media(el)
-	print(repr(test_class))
+#for el in media_samples:
+#	test_class = Media(el)
+	#print(repr(test_class))
+#	print('the' in test_class)
 
 
 ## [PROBLEM 2] [400 POINTS]
@@ -141,7 +143,30 @@ print("\n***** PROBLEM 2 *****\n")
 
 ## Should have the len method overridden to return the number of seconds in the song. (HINT: The data supplies number of milliseconds in the song... How can you access that data and convert it to seconds?)
 
+class Song(Media):
+	def __init__(self, data_dict):
+		Media.__init__(self, data_dict)
+		self.album = data_dict['collectionName']
+		self.track_number = data_dict['trackNumber']
+		self.genre = data_dict['primaryGenreName']
+		try:
+			self.track_time = data_dict['trackTimeMillis']
+		except:
+			self.track_time = 0
 
+	def __len__(self):
+		return self.track_time/1000
+
+
+################## Test #######################
+print("*************** SONG CLASS *******************")
+song_samples = sample_get_cache_itunes_data("love","music")["results"]
+
+for el in song_samples:
+	test_class = Song(el)
+	#print(test_class.title)
+	print(len(test_class))
+##############################################
 
 ### class Movie:
 
@@ -155,6 +180,40 @@ print("\n***** PROBLEM 2 *****\n")
 
 ## Should have an additional method called title_words_num that returns an integer representing the number of words in the movie description. If there is no movie description, this method should return 0.
 
+class Movie(Media):
+	def __init__(self, data_dict):
+		Media.__init__(self, data_dict)
+		self.rating = data_dict['contentAdvisoryRating']
+		self.genre = data_dict['primaryGenreName']
+
+		try:
+			self.track_time = data_dict['trackTimeMillis']
+		except:
+			self.track_time = 0
+
+		try: 
+			self.description = data_dict['longDescription']
+		except:
+			self.description = None
+
+	def __len__(self):
+		return self.track_time/1000
+
+	def title_words_num(self):
+		if self.description != None:
+			return len(self.description.split())
+		else:
+			return 0
+
+################# Test ########################
+print("*************** MOVIE CLASS *******************")
+movie_samples = sample_get_cache_itunes_data("love","movie")["results"]
+
+for el in movie_samples:
+	test_class = Movie(el)
+	#print(test_class.title)
+	print(test_class.title_words_num())
+##############################################
 
 
 ## [PROBLEM 3] [150 POINTS]
@@ -183,11 +242,34 @@ movie_samples = sample_get_cache_itunes_data("love","movie")["results"]
 
 ## You may use any method of accumulation to make that happen.
 
+media_list = [Media(el) for el in media_samples]
+song_list = [Song(el) for el in song_samples]
+movie_list = [Movie(el) for el in movie_samples]
 
-
+########## Test ################
+for media in media_list:
+	print(media.title)
+################################
 
 ## [PROBLEM 4] [200 POINTS]
 print("\n***** PROBLEM 4 *****\n")
+
+title_list = ['media', 'songs', 'movies']
+results_list = [media_list, song_list, movie_list]
+
+for i in range(3):
+	fhnd = open('{}.csv'.format(title_list[i]),'w')
+
+	fhnd.write('title,artist,id,url,length\n')
+	for inst in results_list[i]:
+		string = """"{}","{}",{},{},{}\n""".format(
+			inst.title.encode('ascii','replace'),
+			inst.author.encode('ascii','replace'),
+			inst.itunes_id, inst.itunes_URL.encode('ascii'),
+			len(inst))
+		fhnd.write(string)
+	fhnd.close()
+
 
 ## Finally, write 3 CSV files:
 # - movies.csv
@@ -214,9 +296,6 @@ print("\n***** PROBLEM 4 *****\n")
 ## HINT #3: Check out the sections in the textbook on opening and writing files, and the section(s) on CSV files!
 
 ## HINT #4: Write or draw out your plan for this before you actually start writing the code! That will make it much easier.
-
-
-
 
 
 

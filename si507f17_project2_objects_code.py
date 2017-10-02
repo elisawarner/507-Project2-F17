@@ -159,13 +159,13 @@ class Song(Media):
 
 
 ################## Test #######################
-print("*************** SONG CLASS *******************")
-song_samples = sample_get_cache_itunes_data("love","music")["results"]
+#print("*************** SONG CLASS *******************")
+#song_samples = sample_get_cache_itunes_data("love","music")["results"]
 
-for el in song_samples:
-	test_class = Song(el)
+#for el in song_samples:
+#	test_class = Song(el)
 	#print(test_class.title)
-	print(len(test_class))
+#	print(len(test_class))
 ##############################################
 
 ### class Movie:
@@ -197,7 +197,7 @@ class Movie(Media):
 			self.description = None
 
 	def __len__(self):
-		return self.track_time/1000
+		return self.track_time/(1000*60)
 
 	def title_words_num(self):
 		if self.description != None:
@@ -206,13 +206,13 @@ class Movie(Media):
 			return 0
 
 ################# Test ########################
-print("*************** MOVIE CLASS *******************")
-movie_samples = sample_get_cache_itunes_data("love","movie")["results"]
+#print("*************** MOVIE CLASS *******************")
+#movie_samples = sample_get_cache_itunes_data("love","movie")["results"]
 
-for el in movie_samples:
-	test_class = Movie(el)
+#for el in movie_samples:
+#	test_class = Movie(el)
 	#print(test_class.title)
-	print(test_class.title_words_num())
+#	print(test_class.title_words_num())
 ##############################################
 
 
@@ -247,8 +247,8 @@ song_list = [Song(el) for el in song_samples]
 movie_list = [Movie(el) for el in movie_samples]
 
 ########## Test ################
-for media in media_list:
-	print(media.title)
+#for media in media_list:
+#	print(media.title)
 ################################
 
 ## [PROBLEM 4] [200 POINTS]

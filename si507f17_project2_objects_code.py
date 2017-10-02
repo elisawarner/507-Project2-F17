@@ -107,11 +107,6 @@ class Media(object):
 ## - itunes_URL
 ## - itunes_id (e.g. the value of the track ID, whatever the track is in the data... a movie, a song, etc)
 
-## The Media class should also have the following methods:
-## - a special string method, that returns a string of the form 'TITLE by AUTHOR'
-## - a special representation method, which returns "ITUNES MEDIA: <itunes id>" with the iTunes id number for the piece of media (e.g. the track) only in place of "<itunes id>"
-## - a special len method, which, for the Media class, returns 0 no matter what. (The length of an audiobook might mean something different from the length of a song, depending on how you want to define them!)
-## - a special contains method (for the in operator) which takes one additional input, as all contains methods must, which should always be a string, and checks to see if the string input to this contains method is INSIDE the string representing the title of this piece of media (the title instance variable)
 
 # TEST #
 #media_samples = sample_get_cache_itunes_data("love")["results"]

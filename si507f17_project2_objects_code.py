@@ -150,7 +150,7 @@ class Song(Media):
 			self.track_time = 0
 
 	def __len__(self):
-		return self.track_time/1000
+		return int(self.track_time/1000)
 
 
 ################## Test #######################
@@ -192,7 +192,7 @@ class Movie(Media):
 			self.description = None
 
 	def __len__(self):
-		return self.track_time/(1000*60)
+		return int(self.track_time/(1000*60))
 
 	def title_words_num(self):
 		if self.description != None:
@@ -258,10 +258,10 @@ for i in range(3):
 	fhnd.write('title,artist,id,url,length\n')
 	for inst in results_list[i]:
 		string = """"{}","{}",{},{},{}\n""".format(
-			inst.title.encode('ascii','replace'),
-			inst.author.encode('ascii','replace'),
-			inst.itunes_id, inst.itunes_URL.encode('ascii'),
-			len(inst))
+			inst.title,
+			inst.author,
+			inst.itunes_id, inst.itunes_URL,
+			inst.__len__())
 		fhnd.write(string)
 	fhnd.close()
 
